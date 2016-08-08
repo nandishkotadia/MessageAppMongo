@@ -32,7 +32,7 @@ public class MessageMongoAccessor {
 							Criteria.where("senderUsername").is(receiverUsername)
 							.and("receiverUsername").is(senderUsername))
 				);
-		q.with(new Sort(Sort.Direction.DESC, "pubDate"));
+		q.with(new Sort(Sort.Direction.ASC, "pubDate"));
 		return mongoOperation.find(q, Message.class);
 	}
 
@@ -47,7 +47,7 @@ public class MessageMongoAccessor {
 							Criteria.where("senderUsername").is(receiverUsername)
 							.and("receiverUsername").is(senderUsername))
 				);
-		q.with(new Sort(Sort.Direction.DESC, "pubDate"));
+		q.with(new Sort(Sort.Direction.ASC, "pubDate"));
 		return mongoOperation.count(q, Message.class);
 	}
 
@@ -62,7 +62,7 @@ public class MessageMongoAccessor {
 				Criteria.where("senderUsername").is(receiverUsername)
 						.and("receiverUsername").is(senderUsername))
 				);
-		q.with(new Sort(Sort.Direction.DESC, "pubDate"));
+		q.with(new Sort(Sort.Direction.ASC, "pubDate"));
 		return mongoOperation.count(q, Message.class);
 	}
 
