@@ -218,18 +218,18 @@
 							</div>
 						</div>
 						<div class="panel-footer">
-							<!-- <form> -->
+							<form id = "sendName">
 								<div class="input-group">
 									<input type="text" id="messageContent" class="form-control bg-silver" placeholder="Enter message" />
 									<span class="input-group-btn">
-										<button onclick="sendName();" class="btn btn-primary" type="submit"><i class="fa fa-pencil"></i></button>
+										<button class="btn btn-primary" type="submit"><i class="fa fa-pencil"></i></button>
 									</span>
 								</div>
-							<!-- </form> -->
+							</form>
                         </div>
 					</div>
 				</div>
-				<!-- end col-8 -->
+				<!-- end col-8 onclick="sendName();"-->
 			</div>
 			<!-- end row -->
 		</div>
@@ -555,12 +555,15 @@
 			response.appendChild(li);
 		}
 		
-		function sendName() {
+		
+		//function sendName() {
+		$('#sendName').submit(function(e){
+			 e.preventDefault();
             var messageContent = document.getElementById('messageContent').value;
             //stompClient.send("/app/hello/sender/"+senderId+"/receiver/"+receiverId+"/", {}, JSON.stringify({ 'name': name}) );
         	stompClient.send("/app/message/sender/"+myId+"/receiver/"+receiverId,{},JSON.stringify({ 'content': messageContent}) );
         	$('#messageContent').val('');
-		}
+		});
 
         function showGreeting(message) {
         	/* <li class="media media-sm">
@@ -572,21 +575,16 @@
 				<p>Morbi molestie lorem quis accumsan elementum. Morbi condimentum nisl iaculis, laoreet risus sed, porta neque. Proin mi leo, dapibus at ligula a, aliquam consectetur metus.</p>
 			</div>
 			</li> */
-			for(var i=0;i<message.length;i++)
-			{
+			for(var i=0;i<message.length;i++){
 				var messageContent = message[i]['content'];
 				var receiverName = message[i]['receiverName'];
 				var senderName = message[i]['senderName'];
-				
 				addMessageElement(messageContent,receiverName,senderName);
 			}
 			
 			setTimeout(function(){
 				$("#messageScroll").scrollTop(1000000);
 				}, 100);
-
-			
-			
         }
         
         function showChat(message) {
@@ -601,8 +599,7 @@
 			</li> */
 			var response = document.getElementById('individualMessageDiv');
 			response.innerHTML="";
-			for(var i=0;i<message.length;i++)
-			{
+			for(var i=0;i<message.length;i++){
 				var messageContent = message[i]['content'];
 				var receiverName = message[i]['receiverName'];
 				var senderName = message[i]['senderName'];
@@ -613,28 +610,22 @@
 			 
 			setTimeout(function(){
 				$("#messageScroll").scrollTop(1000000);
-				}, 100);
+			}, 100);
         }
         
-        function addMessageElement(messageContent,receiverName,senderName)
-        {
+        function addMessageElement(messageContent,receiverName,senderName){
         	var response = document.getElementById('individualMessageDiv');
-        	
         	var my = false;
-			if(senderName == myId)
-			{
+			if(senderName == myId){
 				my=true;
 			}
 			
             var li = document.createElement('li');
             li.className="media media-sm"
             var a = document.createElement('a');
-            if(my==true)
-           	{
+            if(my==true){
             	a.setAttribute('class', 'pull-right');
-           	}
-            else
-            {
+           	}else{
             	a.setAttribute('class', 'pull-left');
             }
             
@@ -646,8 +637,7 @@
             a.appendChild(img);
             
             var div = document.createElement('div');
-            if(my==true)
-            {
+            if(my==true){
             	div.style.textAlign = "right";
             }
             div.setAttribute('class', 'media-body');
