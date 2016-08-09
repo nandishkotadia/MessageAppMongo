@@ -12,16 +12,52 @@
 	<meta content="" name="description" />
 	<meta content="" name="author" />
 	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	
 	<!-- ================== BEGIN BASE CSS STYLE ================== -->
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css" rel="stylesheet" />
 	<link href="https://cdn.jsdelivr.net/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" />
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/emojify.js/0.9.5/emojify-emoticons.min.css" rel="stylesheet" />
 	<link href="assets/css/animate.min.css" rel="stylesheet" />
 	<link href="assets/css/style.min.css" rel="stylesheet" />
 	<link href="assets/css/style-responsive.min.css" rel="stylesheet" />
 	<link href="assets/css/theme/default.css" rel="stylesheet" id="theme" />
+	
+		<!-- ================== BEGIN BASE JS ================== -->
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.1.0/jquery-migrate-1.1.0.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/emojify.js/0.9.5/emojify.min.js"></script>
+	<!-- ================== END BASE JS ================== -->
+	
+	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+	<script src="assets/js/dashboard.min.js"></script>
+	<script src="assets/js/apps.min.js"></script>
+	
+	<!-- ================== END PAGE LEVEL JS ================== -->
+	
+	
+	<style type="text/css">
+		.emoji {
+		    width: 1.5em;
+		    height: 1.5em;
+		    display: inline-block;
+		    margin-bottom: -0.25em;
+		}
+		.messageText{
+			font-size:2em;
+			margin-bottom: 5px !important;
+		}
+	</style>
+	
 	<!-- ================== END BASE CSS STYLE ================== -->
 	
 	<!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
@@ -318,24 +354,6 @@
 	</div>
 	<!-- end page container -->
 	
-	<!-- ================== BEGIN BASE JS ================== -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.1.0/jquery-migrate-1.1.0.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-
-	<!-- ================== END BASE JS ================== -->
-	
-	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
-	<script src="assets/js/dashboard.min.js"></script>
-	<script src="assets/js/apps.min.js"></script>
-	
-	<!-- ================== END PAGE LEVEL JS ================== -->
-	
 	<script>
 	var stompClient = null;
     var myId = localStorage.getItem("myId");
@@ -343,6 +361,12 @@
 		$(document).ready(function() {
 			App.init();
 			Dashboard.init();
+			
+			emojify.setConfig({
+			    img_dir          : 'assets/images/emoji'
+			});
+			
+			
 			if(myId)
 	    	{
 	    		var socket = new SockJS('/hello');
@@ -364,12 +388,9 @@
 	                
 	                stompClient.subscribe('/topic/message/'+myId, function(greeting){
 	                	var data = JSON.parse(greeting.body);
-	                	if(receiverId == data[0]['senderName'])
-	                	{
+	                	if(receiverId == data[0]['senderName']){
 	                		showGreeting(data);	
-	                	}
-	                	else
-	                	{
+	                	}else{
 	                		addNotification(data);
 	                	}
 	                    
@@ -380,20 +401,15 @@
 	                });
 	                stompClient.subscribe('/topic/userStatus', function(statusDTO){
 	                	var data = JSON.parse(statusDTO.body);
-	                	if(myId != data['username'])
-	                	{
+	                	if(myId != data['username']){
 	                		showStatus(data);
 	                	}
-	                	
-	                
 	                });
 	                stompClient.send("/app/userStatus",{},JSON.stringify({'username':myId,'status':'ONLINE'}) );
-	            	
 	            });
 	            
 	          getFriendsList();			
 	    	}
-			
 			$('#logout').click(function(){
 				logout();
 			});
@@ -404,8 +420,7 @@
 			getFriendChat(e);
 		});
 		
-		function getFriendsList()
-		{
+		function getFriendsList(){
 			$.ajax({
 	            type: 'GET',
 	            url: '/user/'+myId+'/friends',
@@ -421,18 +436,14 @@
 	    	                showFriends(data,unread);
 	    	            }
 	    	        });//ajax close   
-	            	
 	                //showFriends(data);
 	            }
 	        });//ajax close   
 		}
 		
-		function getFriendChat(e)
-		{
-			  if(receiverId && receiverId != e.currentTarget.id)
-			    {
-			    	if(receiverId == 'z')
-			    	{
+		function getFriendChat(e){
+			  if(receiverId && receiverId != e.currentTarget.id){
+			    	if(receiverId == 'z'){
 			    		receiverId = e.currentTarget.id;	
 			    	}
 			    	stompClient.send("/app/lastreadstatus",{},JSON.stringify({'senderUsername':myId,'receiverUsername':receiverId}) );
@@ -446,11 +457,8 @@
 		    }
 		}
 		
-		
-		function logout()
-		{
-			if(receiverId != 'z')
-	    	{
+		function logout(){
+			if(receiverId != 'z'){
 	    		stompClient.send("/app/lastreadstatus",{},JSON.stringify({'senderUsername':myId,'receiverUsername':receiverId}) );
 	    	}
 			stompClient.send("/app/userStatus",{},JSON.stringify({'username':myId,'status':'OFFLINE'}) );
@@ -458,38 +466,30 @@
 			window.location.href='login.html';
 		}
 		
-		function showStatus(data)
-		{
+		function showStatus(data){
 			var username = data['username'];
 			var status = data['status'];
 			var el = $('#'+username).find('.userStatus');
-			if(status=='OFFLINE')
-			{
+			if(status=='OFFLINE'){
 				$(el).removeClass('btn-success');
 				$(el).addClass('btn-danger');
-			}
-			else
-			{
+			}else{
 				$(el).removeClass('btn-danger');
 				$(el).addClass('btn-success');	
 			}
 		}
 		
-		function addNotification(data)
-		{
+		function addNotification(data){
 			var senderName = data[0]['senderName'];
 			var el = $('#'+senderName).find('.messageNum');
 			var current = el[0].innerHTML;
 			current = parseInt(current)+1;
 			el[0].innerHTML=current;
 		}
-		function showFriends(friends,unread)
-		{	
-			for(var i=0;i<friends.length;i++)
-			{
-				
+		
+		function showFriends(friends,unread){	
+			for(var i=0;i<friends.length;i++){
 				var username = friends[i]['username'];
-				
 				var displayName = friends[i]['displayName'];
 				var status = friends[i]['status'];
 				/* <li class="has-sub">
@@ -498,18 +498,12 @@
 					<span>Nandish Kotadia</span>
 				</a>
 				</li> */
-				if(username==myId)
-				{
+				if(username==myId){
 					$('.infoName').text(displayName);
-				}
-				else
-				{
+				}else{
 					var notfication =0 ;
-					for(var j=0;j<unread.length;j++)
-					{
-						
-						if(unread[j]['receiverUsername']==username)
-						{
+					for(var j=0;j<unread.length;j++){
+						if(unread[j]['receiverUsername']==username){
 							notification = unread[j]['noOfNotifications'];
 							break;
 						}
@@ -519,8 +513,7 @@
 			}
 		}
 		
-		function addUserInFriendsList(username,displayName,status,notification)
-		{
+		function addUserInFriendsList(username,displayName,status,notification){
 			var response = document.getElementById('friendsList');
 			var li = document.createElement('li');
 			li.setAttribute('class', 'has-sub');
@@ -533,13 +526,10 @@
 			span1.innerHTML = notification;
 			/* <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success"></a> */
 			var span3 = document.createElement('a');
-			if(status=='OFFLINE')
-			{
+			if(status=='OFFLINE'){
 				span3.className = 'btn btn-xs btn-icon btn-circle btn-danger userStatus';
 				span3.style.marginRight = '20px';
-			}
-			else
-			{
+			}else{
 				span3.className = 'btn btn-xs btn-icon btn-circle btn-success userStatus';
 				span3.style.marginRight = '20px';
 			}
@@ -560,9 +550,11 @@
 		$('#sendName').submit(function(e){
 			 e.preventDefault();
             var messageContent = document.getElementById('messageContent').value;
-            //stompClient.send("/app/hello/sender/"+senderId+"/receiver/"+receiverId+"/", {}, JSON.stringify({ 'name': name}) );
-        	stompClient.send("/app/message/sender/"+myId+"/receiver/"+receiverId,{},JSON.stringify({ 'content': messageContent}) );
-        	$('#messageContent').val('');
+            if(messageContent != ''){
+	            //stompClient.send("/app/hello/sender/"+senderId+"/receiver/"+receiverId+"/", {}, JSON.stringify({ 'name': name}) );
+	        	stompClient.send("/app/message/sender/"+myId+"/receiver/"+receiverId,{},JSON.stringify({ 'content': messageContent}) );
+	        	$('#messageContent').val('');
+            }
 		});
 
         function showGreeting(message) {
@@ -584,7 +576,7 @@
 			
 			setTimeout(function(){
 				$("#messageScroll").scrollTop(1000000);
-				}, 100);
+			}, 100);
         }
         
         function showChat(message) {
@@ -607,10 +599,14 @@
 			}
 			 //scroll to the last element in the div
 			//$("#individualMessageDiv").scrollTop($("#individualMessageDiv")[0].scrollHeight);
+			
+			emojify.run(document.getElementById('individualMessageDiv')); 
 			 
 			setTimeout(function(){
 				$("#messageScroll").scrollTop(1000000);
 			}, 100);
+			
+						
         }
         
         function addMessageElement(messageContent,receiverName,senderName){
@@ -641,17 +637,24 @@
             	div.style.textAlign = "right";
             }
             div.setAttribute('class', 'media-body');
-            var h5 = document.createElement('h5');
+            /* var h5 = document.createElement('h5');
             h5.setAttribute('class', 'media-heading');
-            h5.innerHTML = senderName;
-            var p = document.createElement('p');	           
+            h5.innerHTML = senderName; */
+            
+            var p = document.createElement('p');
+            p.setAttribute('class','messageText');
+            $(p).css({
+            	"font-size":"14px"
+          	});
             p.appendChild(document.createTextNode(messageContent));
-            div.appendChild(h5);
+            //div.appendChild(h5);
             div.appendChild(p);
             
             li.appendChild(a);
             li.appendChild(div);
             response.appendChild(li);
+            
+            emojify.run(document.getElementById('individualMessageDiv')); 
         }
 	</script>
 </body>
